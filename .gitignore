@@ -1,0 +1,35 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Credentials
+.ssh/
+*.pem
+*.key
+
+# Reproduction data and large artifacts
+**/data/
+**/dataset/
+**/datasets/
+**/saved/
+**/checkpoints/
+**/logs/
+**/results/artifacts/
+**/wandb/
+
+# Notebook and test caches
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
