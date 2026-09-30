@@ -29,3 +29,9 @@ projects/<paper-id>/
 ## 项目索引
 
 新建项目时在此追加：论文简称、代码目录、知识库目录、upstream commit 和当前状态。
+
+- **SimDiffRec**
+  - 代码：[`projects/SimDiffRec/`](projects/SimDiffRec/)
+  - 知识库：[`recsys-firstgrade/knowledge_base/paper/diffusion/SimDiffRec/`](../recsys-firstgrade/knowledge_base/paper/diffusion/SimDiffRec/)
+  - upstream：`zingyon/SimDiffRec@eb6784b2e9741052c5f104847e41b5accc812e7e`
+  - 状态：阅读与静态代码审计完成，尚未下载数据或启动训练
