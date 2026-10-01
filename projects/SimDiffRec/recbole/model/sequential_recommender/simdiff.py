@@ -125,6 +125,12 @@ class SimDiff(SequentialRecommender):
         self.con_sim = Similarity(temp=0.05)
 
         self.mask_strategy = config['mask_strategy']
+        self.noise_mode = config['noise_mode']
+        self.position_mode = config['position_mode']
+        if self.noise_mode not in {'semantic', 'gaussian'}:
+            raise ValueError("noise_mode must be one of ['semantic', 'gaussian']")
+        if self.position_mode not in {'confidence', 'random'}:
+            raise ValueError("position_mode must be one of ['confidence', 'random']")
 
         self.loss_fct = nn.CrossEntropyLoss(ignore_index=0)
         self.n_embedding = config['n_embedding']
@@ -178,19 +184,22 @@ class SimDiff(SequentialRecommender):
         
         seq_emb = self.item_embedding(item_seq)
         
-        sims = torch.matmul(seq_emb, emb_weight)
-        
         batch_size, seq_len, _ = seq_emb.shape
 
-        batch_idx = torch.arange(batch_size)[:, None].expand(batch_size, seq_len)
-        seq_idx = torch.arange(seq_len)[None, :].expand(batch_size, seq_len)
+        if self.noise_mode == 'semantic':
+            sims = torch.matmul(seq_emb, emb_weight)
 
-        sims[batch_idx, seq_idx, item_seq] = torch.finfo(emb_weight.dtype).min
-        _, top_n_indices = torch.topk(sims, k=self.n_embedding, dim=-1)  # shape: [batch_size, seq_len, n]
+            batch_idx = torch.arange(batch_size)[:, None].expand(batch_size, seq_len)
+            seq_idx = torch.arange(seq_len)[None, :].expand(batch_size, seq_len)
 
-        top_n_embeds = self.item_embedding(top_n_indices)  # [batch_size, seq_len, n, hidden_dim]
+            sims[batch_idx, seq_idx, item_seq] = torch.finfo(emb_weight.dtype).min
+            _, top_n_indices = torch.topk(sims, k=self.n_embedding, dim=-1)  # shape: [batch_size, seq_len, n]
 
-        noise = top_n_embeds.mean(dim=2)  # [batch_size, seq_len, hidden_dim]
+            top_n_embeds = self.item_embedding(top_n_indices)  # [batch_size, seq_len, n, hidden_dim]
+
+            noise = top_n_embeds.mean(dim=2)  # [batch_size, seq_len, hidden_dim]
+        else:
+            noise = torch.randn_like(seq_emb)
 
         replaced_items, timesteps = self.scheduler.add_noise(seq_emb, noise)
         noise_embeds = replaced_items.view(batch_size, seq_len, -1)
@@ -205,8 +214,12 @@ class SimDiff(SequentialRecommender):
         topk_probs, topk = torch.topk(probs, k=self.n_sampling, dim=-1)  # shape: [batch_size, seq_len, 2]
         
         max_probs, _ = torch.max(probs, dim=-1)  # shape: [batch_size, seq_len]
-        max_probs[item_seq == 0] = 0
-        _, topk_indices = torch.topk(max_probs, k=self.mask_item_length, dim=1)  # shape: [batch_size, k]
+        if self.position_mode == 'confidence':
+            position_scores = max_probs
+        else:
+            position_scores = torch.rand_like(max_probs)
+        position_scores[item_seq == 0] = 0
+        _, topk_indices = torch.topk(position_scores, k=self.mask_item_length, dim=1)  # shape: [batch_size, k]
 
         masked_indices = torch.zeros(batch_size, seq_len, dtype=torch.bool, device=logits.device)
         masked_indices.scatter_(1, topk_indices, True)
@@ -288,7 +301,7 @@ class SimDiff(SequentialRecommender):
         test_items_emb = self.item_embedding.weight[:-1, :]
         scores = torch.matmul(seq_output, test_items_emb.transpose(0, 1))  # [B n_items]
 
-        return scores, seq_output
+        return scores
 
 
 

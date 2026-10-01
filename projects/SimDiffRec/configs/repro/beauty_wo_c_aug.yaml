@@ -1,0 +1,4 @@
+# Local execution-patch config; not an author-released configuration.
+noise_mode: semantic
+position_mode: random
+topk: [5, 10]

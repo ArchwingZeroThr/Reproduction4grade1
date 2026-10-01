@@ -18,9 +18,30 @@ Environment Dependencies
 
 Beauty, Toys and Sports(http://jmcauley.ucsd.edu/data/amazon/)
 
+For the B1 data preparation path, `scripts/data/prepare_amazon_2014.py`
+downloads the official Amazon Reviews 2014 5-core subset, converts it to a
+RecBole `.inter` file under an explicit storage root, and strictly checks the
+user/item/interaction counts from paper Table 1. It never writes dataset data
+inside Git unless the caller deliberately chooses such a storage root.
+
+```bash
+python scripts/data/prepare_amazon_2014.py \
+  --dataset Beauty \
+  --storage-root /root/autodl-tmp/simdiffrec
+```
+
 Yelp(https://www.yelp.com/dataset)
 
-MovieLens(https://grouplens.org/datasets/movielen
+For the exact 316,354-interaction Yelp sequence statistics used by this line
+of sequential-recommendation work, `scripts/data/prepare_yelp_ticoserec.py`
+converts Yelp-A published by the official TiCoSeRec repository. Its manifest
+pins the upstream commit and verifies paper Table 1 exactly.
+
+MovieLens(https://grouplens.org/datasets/movielens/1m/)
+
+`scripts/data/prepare_ml1m.py` downloads and verifies the official GroupLens
+archive and creates `.inter` and `.item` files. Its manifest keeps the paper's
+3,953-item count discrepancy visible instead of inventing missing movie ids.
 
 ## Run
 
@@ -44,3 +65,13 @@ This directory is a source snapshot managed by the `Reproduction4grade1` monorep
 ## AutoDL
 
 AutoDL environment setup and the non-training deployment entry point are documented in [`AUTO_DL.md`](AUTO_DL.md). The bootstrap is idempotent and keeps datasets, checkpoints, logs, and results under `/root/autodl-tmp/`.
+
+The approved P1/P2 sequence is launched server-side with
+`scripts/autodl/run_approved_plan.sh`. It runs one job at a time, stops on the
+first non-zero exit, and delegates per-run logs, exit codes, timestamps, and
+start/end GPU snapshots to `scripts/autodl/run_batch.sh`; it does not poll the
+GPU periodically.
+
+At batch completion, `scripts/results/summarize_runs.py` creates per-run
+JSON/CSV, cross-seed aggregates, and a compact Markdown status summary beside
+the logs.

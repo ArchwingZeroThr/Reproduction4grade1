@@ -1,0 +1,3 @@
+# TiCoSeRec Yelp-A contains remapped sequences and timestamps, not item metadata.
+load_col:
+    inter: [user_id, business_id, stars, date]

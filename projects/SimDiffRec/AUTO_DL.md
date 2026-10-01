@@ -54,7 +54,68 @@ After approved datasets have been converted to RecBole atomic files under `simdi
   /root/autodl-tmp/Reproduction4grade1/projects/SimDiffRec/scripts/autodl/preflight.py \
   --project-root /root/autodl-tmp/Reproduction4grade1/projects/SimDiffRec \
   --storage-root /root/autodl-tmp/simdiffrec \
+  --instance-id 'simdiffrec-autodl-4090-01' \
   --require-data
 ```
 
 Formal run commands are added only after the final plan version, seeds, resource cap, and batches are approved.
+
+## B1 data preparation
+
+The converter streams the compressed source, records compressed and converted
+SHA256 digests and byte counts, checks the 5-core invariant, and requires the
+paper Table 1 counts to match before publishing the `.inter` file. The Beauty
+source also has a pinned known SHA256. Raw data, converted data, and the JSON
+manifest remain under the persistent storage root.
+
+```bash
+cd /root/autodl-tmp/Reproduction4grade1/projects/SimDiffRec
+/root/autodl-tmp/envs/simdiffrec/bin/python \
+  scripts/data/prepare_amazon_2014.py \
+  --dataset Beauty \
+  --storage-root /root/autodl-tmp/simdiffrec
+```
+
+`--dataset` also accepts `Toys_and_Games` and `Sports_and_Outdoors`.
+
+Prepare the other two sources with their audited converters:
+
+```bash
+/root/autodl-tmp/envs/simdiffrec/bin/python scripts/data/prepare_yelp_ticoserec.py \
+  --storage-root /root/autodl-tmp/simdiffrec
+/root/autodl-tmp/envs/simdiffrec/bin/python scripts/data/prepare_ml1m.py \
+  --storage-root /root/autodl-tmp/simdiffrec
+```
+
+## Audited command wrapper
+
+`run_batch.sh` does not add a training or evaluation loop. It wraps exactly the
+provided command and saves its combined log, exit code, UTC start/end times,
+and one `nvidia-smi` CSV snapshot at each boundary. Use a unique run ID and keep
+the output directory on the persistent data disk.
+
+```bash
+bash scripts/autodl/run_batch.sh \
+  --output-dir /root/autodl-tmp/simdiffrec/logs/b1 \
+  --run-id example-static-approved-command \
+  -- <approved-command> <approved-arguments>
+```
+
+## Formal P1/P2 batch
+
+After all dataset manifests and static checks pass, launch the approved
+three-seed P1/P2 plan as a server-side background job:
+
+```bash
+nohup bash scripts/autodl/run_approved_plan.sh \
+  --project-root /root/autodl-tmp/Reproduction4grade1/projects/SimDiffRec \
+  --storage-root /root/autodl-tmp/simdiffrec \
+  --python /root/autodl-tmp/envs/simdiffrec/bin/python \
+  --seeds 42,43,44 \
+  > /root/autodl-tmp/simdiffrec/logs/approved-plan-launch.log 2>&1 </dev/null &
+```
+
+The plan runs one job at a time and stops at the first non-zero exit. It does
+not poll the GPU periodically. Each run still writes its command, combined
+log, true exit code, UTC start/end times, checkpoint directory, and start/end
+GPU snapshots. Raw data, checkpoints, and full logs stay outside Git.

@@ -17,3 +17,9 @@
 - Model code and upstream configuration files were not changed during import.
 
 Future upstream synchronization must record the old and new upstream commits and preserve local patches as reviewable commits. Do not replace this directory with an untracked nested clone.
+
+## Local execution compatibility patch
+
+- In the imported author snapshot `zingyon/SimDiffRec@eb6784b2e9741052c5f104847e41b5accc812e7e`, `SimDiff.full_sort_predict()` returns `(scores, seq_output)`.
+- The bundled RecBole `Trainer._full_sort_batch_eval()` expects the standard `Tensor` score contract and immediately calls `scores.view(...)`; the tuple therefore fails at the first full-sort evaluation.
+- The local execution patch returns `scores` only. The exact author behavior remains attributable to the immutable imported commit above; this is an evaluation-interface compatibility fix, not a change to score calculation.

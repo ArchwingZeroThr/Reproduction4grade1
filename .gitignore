@@ -16,6 +16,8 @@ venv/
 **/data/
 !projects/SimDiffRec/recbole/data/
 !projects/SimDiffRec/recbole/data/**
+!projects/SimDiffRec/scripts/data/
+!projects/SimDiffRec/scripts/data/**
 **/dataset/
 !projects/SimDiffRec/recbole/data/dataset/
 !projects/SimDiffRec/recbole/data/dataset/**
