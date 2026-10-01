@@ -26,6 +26,11 @@ venv/
 **/results/artifacts/
 **/wandb/
 
+# SimDiffRec persistent-storage symlinks
+projects/SimDiffRec/dataset
+projects/SimDiffRec/saved
+projects/SimDiffRec/logs
+
 # Notebook and test caches
 .ipynb_checkpoints/
 .pytest_cache/
