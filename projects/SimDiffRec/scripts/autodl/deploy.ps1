@@ -9,6 +9,10 @@ param(
     [ValidatePattern('^[A-Za-z0-9._-]+$')]
     [string]$InstanceId,
 
+    [Parameter(Mandatory = $true)]
+    [ValidateScript({ Test-Path -LiteralPath $_ -PathType Leaf })]
+    [string]$IdentityFile,
+
     [string]$UserName = "root",
     [string]$Ref = "main",
     [string]$RepositoryUrl = "https://github.com/ArchwingZeroThr/Reproduction4grade1.git",
@@ -18,9 +22,11 @@ param(
 $ErrorActionPreference = "Stop"
 
 $sshTarget = "${UserName}@${HostName}"
+$resolvedIdentityFile = (Resolve-Path -LiteralPath $IdentityFile).Path
 $sshArgs = @(
     "-o", "BatchMode=yes",
     "-o", "StrictHostKeyChecking=accept-new",
+    "-i", $resolvedIdentityFile,
     "-p", $Port,
     $sshTarget
 )

@@ -29,7 +29,7 @@ Every new or replaced instance must use a new `InstanceId` and rerun bootstrap/p
     run-manifests/
 ```
 
-`bootstrap.sh` creates an isolated virtual environment that reuses the image's CUDA-enabled PyTorch and installs the pinned Python dependencies. It then links large or generated directories to the persistent data disk.
+`bootstrap.sh` creates an isolated Python 3.10 environment and installs the pinned Python dependencies. With the recommended Python 3.10 image it reuses the image's CUDA-enabled PyTorch. If the rented image exposes another Python version, it creates a Conda environment on the data disk and installs PyTorch 2.1.2 with the CUDA 11.8 wheel instead of modifying the image's base environment. It then links large or generated directories to the persistent data disk.
 
 ## Deploy from Windows
 
@@ -39,10 +39,11 @@ After adding the local SSH public key to AutoDL and pushing this repository revi
 powershell -ExecutionPolicy Bypass -File .\projects\SimDiffRec\scripts\autodl\deploy.ps1 `
   -HostName '<host from AutoDL SSH command>' `
   -Port <port from AutoDL SSH command> `
-  -InstanceId 'simdiffrec-autodl-4090-01'
+  -InstanceId 'simdiffrec-autodl-4090-01' `
+  -IdentityFile "$env:USERPROFILE\.ssh\id_ed25519_autodl_simdiffrec"
 ```
 
-The deploy script uses key-based, non-interactive SSH. It clones the repository if absent, otherwise performs a fast-forward-only pull, and runs the idempotent bootstrap. The preflight report is saved as `simdiffrec/run-manifests/preflight-<InstanceId>.json`. It does not download datasets or start training.
+The deploy script requires an explicit identity file and uses key-based, non-interactive SSH. It clones the repository if absent, otherwise performs a fast-forward-only pull, and runs the idempotent bootstrap. The preflight report is saved as `simdiffrec/run-manifests/preflight-<InstanceId>.json`. It does not download datasets or start training.
 
 ## Preflight with data
 
