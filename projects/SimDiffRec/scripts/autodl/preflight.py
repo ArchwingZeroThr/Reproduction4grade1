@@ -43,6 +43,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--storage-root", type=Path, required=True)
+    parser.add_argument("--instance-id", required=True)
     parser.add_argument("--require-data", action="store_true")
     args = parser.parse_args()
 
@@ -84,6 +85,8 @@ def main() -> int:
         "dependencies": {name: module_version(name) for name in REQUIRED_MODULES},
         "project_root": str(project_root),
         "storage_root": str(storage_root),
+        "remote_instance_id": args.instance_id,
+        "hostname": platform.node(),
         "interaction_files": interaction_files,
         "git_commit": git_value(project_root, "rev-parse", "HEAD"),
         "git_dirty": bool(git_value(project_root, "status", "--porcelain")),

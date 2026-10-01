@@ -5,6 +5,16 @@ project_root="${1:-/root/autodl-tmp/Reproduction4grade1/projects/SimDiffRec}"
 python_bin="${SIMDIFFREC_BASE_PYTHON:-/root/miniconda3/bin/python}"
 env_root="${SIMDIFFREC_ENV_ROOT:-/root/autodl-tmp/envs/simdiffrec}"
 storage_root="${SIMDIFFREC_STORAGE_ROOT:-/root/autodl-tmp/simdiffrec}"
+instance_id="${SIMDIFFREC_REMOTE_INSTANCE_ID:-}"
+
+if [[ -z "${instance_id}" ]]; then
+  echo "SIMDIFFREC_REMOTE_INSTANCE_ID must identify this paper-specific AutoDL instance" >&2
+  exit 2
+fi
+if [[ ! "${instance_id}" =~ ^[A-Za-z0-9._-]+$ ]]; then
+  echo "SIMDIFFREC_REMOTE_INSTANCE_ID contains unsupported characters: ${instance_id}" >&2
+  exit 2
+fi
 
 if [[ ! -f "${project_root}/run_recbole.py" ]]; then
   echo "Project not found: ${project_root}" >&2
@@ -66,10 +76,14 @@ link_storage "${project_root}/dataset" "${storage_root}/dataset"
 link_storage "${project_root}/saved" "${storage_root}/saved"
 link_storage "${project_root}/logs" "${storage_root}/logs"
 
+preflight_report="${storage_root}/run-manifests/preflight-${instance_id}.json"
 "${env_root}/bin/python" "${project_root}/scripts/autodl/preflight.py" \
   --project-root "${project_root}" \
-  --storage-root "${storage_root}"
+  --storage-root "${storage_root}" \
+  --instance-id "${instance_id}" | tee "${preflight_report}"
 
 echo "BOOTSTRAP_OK"
+echo "instance_id=${instance_id}"
 echo "environment=${env_root}"
 echo "storage=${storage_root}"
+echo "preflight_report=${preflight_report}"

@@ -5,6 +5,10 @@ param(
     [Parameter(Mandatory = $true)]
     [int]$Port,
 
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern('^[A-Za-z0-9._-]+$')]
+    [string]$InstanceId,
+
     [string]$UserName = "root",
     [string]$Ref = "main",
     [string]$RepositoryUrl = "https://github.com/ArchwingZeroThr/Reproduction4grade1.git",
@@ -30,7 +34,8 @@ else
   git -C '$RemoteRoot' checkout '$Ref'
   git -C '$RemoteRoot' pull --ff-only origin '$Ref'
 fi
-bash '$RemoteRoot/projects/SimDiffRec/scripts/autodl/bootstrap.sh' \
+SIMDIFFREC_REMOTE_INSTANCE_ID='$InstanceId' \
+  bash '$RemoteRoot/projects/SimDiffRec/scripts/autodl/bootstrap.sh' \
   '$RemoteRoot/projects/SimDiffRec'
 "@
 
