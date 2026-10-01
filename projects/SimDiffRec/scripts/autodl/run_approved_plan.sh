@@ -33,6 +33,15 @@ mkdir -p "$artifact_root" "$checkpoint_root"
 plan_file="$artifact_root/plan.tsv"
 status_file="$artifact_root/batch.status"
 printf 'run_id\tdataset\tvariant\tseed\n' >"$plan_file"
+for seed in "${seeds[@]}"; do
+  printf 'simdiffrec-Amazon_Beauty-full-s%s-a1\tAmazon_Beauty\tfull\t%s\n' "$seed" "$seed" >>"$plan_file"
+  printf 'simdiffrec-Amazon_Toys_and_Games-full-s%s-a1\tAmazon_Toys_and_Games\tfull\t%s\n' "$seed" "$seed" >>"$plan_file"
+  printf 'simdiffrec-Amazon_Sports_and_Outdoors-full-s%s-a1\tAmazon_Sports_and_Outdoors\tfull\t%s\n' "$seed" "$seed" >>"$plan_file"
+  printf 'simdiffrec-yelp-full-s%s-a1\tyelp\tfull\t%s\n' "$seed" "$seed" >>"$plan_file"
+  printf 'simdiffrec-ml-1m-full-s%s-a1\tml-1m\tfull\t%s\n' "$seed" "$seed" >>"$plan_file"
+  printf 'simdiffrec-Amazon_Beauty-beauty_wo_k_noise-s%s-a1\tAmazon_Beauty\tbeauty_wo_k_noise\t%s\n' "$seed" "$seed" >>"$plan_file"
+  printf 'simdiffrec-Amazon_Beauty-beauty_wo_c_aug-s%s-a1\tAmazon_Beauty\tbeauty_wo_c_aug\t%s\n' "$seed" "$seed" >>"$plan_file"
+done
 
 summarize() {
   "$python_bin" "$project_root/scripts/results/summarize_runs.py" --batch-dir "$artifact_root" || true
@@ -51,7 +60,6 @@ run_one() {
   if [[ -n "$extra_configs" ]]; then
     configs="$configs $extra_configs"
   fi
-  printf '%s\t%s\t%s\t%s\n' "$run_id" "$dataset" "$variant" "$seed" >>"$plan_file"
   mkdir -p "$checkpoint_root/$run_id"
   (
     cd "$project_root" || exit 2
