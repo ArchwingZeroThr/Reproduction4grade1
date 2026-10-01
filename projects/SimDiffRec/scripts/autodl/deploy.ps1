@@ -1,0 +1,42 @@
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$HostName,
+
+    [Parameter(Mandatory = $true)]
+    [int]$Port,
+
+    [string]$UserName = "root",
+    [string]$Ref = "main",
+    [string]$RepositoryUrl = "https://github.com/ArchwingZeroThr/Reproduction4grade1.git",
+    [string]$RemoteRoot = "/root/autodl-tmp/Reproduction4grade1"
+)
+
+$ErrorActionPreference = "Stop"
+
+$sshTarget = "${UserName}@${HostName}"
+$sshArgs = @(
+    "-o", "BatchMode=yes",
+    "-o", "StrictHostKeyChecking=accept-new",
+    "-p", $Port,
+    $sshTarget
+)
+
+$remoteScript = @"
+set -euo pipefail
+if [ ! -d '$RemoteRoot/.git' ]; then
+  git clone --branch '$Ref' --single-branch '$RepositoryUrl' '$RemoteRoot'
+else
+  git -C '$RemoteRoot' fetch origin '$Ref'
+  git -C '$RemoteRoot' checkout '$Ref'
+  git -C '$RemoteRoot' pull --ff-only origin '$Ref'
+fi
+bash '$RemoteRoot/projects/SimDiffRec/scripts/autodl/bootstrap.sh' \
+  '$RemoteRoot/projects/SimDiffRec'
+"@
+
+& ssh @sshArgs $remoteScript
+if ($LASTEXITCODE -ne 0) {
+    throw "AutoDL deployment failed with exit code $LASTEXITCODE"
+}
+
+Write-Output "AUTODL_DEPLOY_OK"

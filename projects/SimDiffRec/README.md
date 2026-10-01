@@ -40,3 +40,7 @@ Hyperparameters for the proposed method are detailed in the paper, dataset-speci
 - Upstream provenance: [`UPSTREAM.md`](UPSTREAM.md)
 
 This directory is a source snapshot managed by the `Reproduction4grade1` monorepo. Do not initialize a nested Git repository here. Data, checkpoints, logs, and large artifacts are excluded by the monorepo `.gitignore`.
+
+## AutoDL
+
+AutoDL environment setup and the non-training deployment entry point are documented in [`AUTO_DL.md`](AUTO_DL.md). The bootstrap is idempotent and keeps datasets, checkpoints, logs, and results under `/root/autodl-tmp/`.

@@ -14,7 +14,11 @@ venv/
 
 # Reproduction data and large artifacts
 **/data/
+!projects/SimDiffRec/recbole/data/
+!projects/SimDiffRec/recbole/data/**
 **/dataset/
+!projects/SimDiffRec/recbole/data/dataset/
+!projects/SimDiffRec/recbole/data/dataset/**
 **/datasets/
 **/saved/
 **/checkpoints/
