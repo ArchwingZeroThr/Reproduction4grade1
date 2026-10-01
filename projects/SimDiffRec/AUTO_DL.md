@@ -107,6 +107,16 @@ After all dataset manifests and static checks pass, launch the approved
 three-seed P1/P2 plan as a server-side background job:
 
 ```bash
+/root/autodl-tmp/envs/simdiffrec/bin/python scripts/autodl/static_plan_check.py \
+  --project-root /root/autodl-tmp/Reproduction4grade1/projects/SimDiffRec \
+  --storage-root /root/autodl-tmp/simdiffrec \
+  --instance-id simdiffrec-694c4b90df-57cbe2fb
+```
+
+This parses all approved configs and datasets and records a conservative
+tensor-size proxy; it does not construct the model or run a forward pass.
+
+```bash
 nohup bash scripts/autodl/run_approved_plan.sh \
   --project-root /root/autodl-tmp/Reproduction4grade1/projects/SimDiffRec \
   --storage-root /root/autodl-tmp/simdiffrec \
