@@ -10,7 +10,7 @@ All three overlays add `topk: [5, 10]` so the default RecBole metric set reports
 
 The formal P1/P2 batch also layers:
 
-- `paper_runtime.yaml`: paper-stated 300 epochs, batch size 256, learning rate `1e-4`, GPU 0 and top-k 5/10.
+- `paper_runtime.yaml`: paper-stated 300 epochs, batch size 256, learning rate `1e-4`, GPU 0 and top-k 5/10; it also supplies RecBole atomic-format fields omitted by the custom upstream configs and locks chronological leave-one-out/full ranking.
 - `amazon_inter_only.yaml` / `yelp_inter_only.yaml`: load only interaction columns because the selected auditable sources do not provide compatible item metadata and SimDiff does not consume it.
 - `dropout_05.yaml`: paper-stated dropout for Toys and Sports.
 - `ml1m_paper_length.yaml`: paper-stated maximum sequence length 200, overriding the public config's 50.

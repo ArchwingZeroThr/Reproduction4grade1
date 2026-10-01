@@ -6,3 +6,22 @@ train_batch_size: 256
 learning_rate: 0.0001
 show_progress: False
 topk: [5, 10]
+
+# The custom upstream dataset files do not inherit RecBole's sample dataset
+# defaults. These fields are required to parse atomic files and construct
+# sequential interaction names.
+field_separator: "\t"
+seq_separator: " "
+NEG_PREFIX: neg_
+ITEM_LIST_LENGTH_FIELD: item_length
+LIST_SUFFIX: _list
+POSITION_FIELD: position_id
+benchmark_filename: ~
+
+# Paper protocol: chronological leave-one-out with full ranking.
+eval_args:
+    split: {'LS': 'valid_and_test'}
+    group_by: user
+    order: TO
+    mode: full
+repeatable: True
