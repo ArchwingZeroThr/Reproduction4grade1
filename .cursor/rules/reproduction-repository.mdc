@@ -6,10 +6,13 @@ alwaysApply: true
 # 论文复现仓库规则
 
 - 所有论文复现代码放在 `projects/<paper-id>/`，不要改放到 `recsys-firstgrade/learning_code/`。
-- 论文 PDF、`Note.md`、`实验复现.md`、`STATUS.md` 放在 `E:\github-local-repository\recsys-firstgrade\knowledge_base\paper\<topic>\<paper-id>\`。
+- 新论文阅读或复现任务开始时，先读取 `C:\Users\16682\Desktop\读研工具\论文复现工作流_v2.md` 的当前版本；无需用户重复发送其中的固定配置。维护流程本身时再读取同目录的修改建议。
+- 论文 PDF、`Note.md`、`实验复现.md`、`STATUS.md`、`复现结果.md` 放在 `E:\github-local-repository\recsys-firstgrade\knowledge_base\paper\<topic>\<paper-id>\`；编辑前读取该仓库的 `AGENTS.md`。
 - 新项目从论文目录和标题推导 `<topic>`、`<paper-id>`；仅在命名冲突会阻塞工作时询问。
 - 外部官方仓库只作为 upstream。导入代码时不保留嵌套 `.git`，并在 `UPSTREAM.md` 记录 URL、commit/tag、许可、导入日期和同步方式。
 - 项目 README 必须链接知识库目录，并说明环境、数据、命令、种子、指标和结果复核方法。
 - 数据集、checkpoint、原始日志、密钥和大型产物不得提交；小型配置、运行清单、失败摘要和指标汇总应保留。
+- 正式任务启动后在 `实验复现.md` 写明真实批次路径及用户自助查看进程、GPU、日志、状态、退出码、checkpoint 和汇总的方法。
+- 实验完成后生成结构清晰的 `复现结果.md`，区分基础/创新实验，提供可追溯数据、必要图表、误差分析、改进方向和可迁移学习。
 - 开始前检查根目录与目标项目的 README、工作区、分支和 remote，保护已有修改。
 - 固定仓库地址不等于自动授权 commit、push、PR、下载数据、训练或远程执行；相关授权按项目计划执行。
