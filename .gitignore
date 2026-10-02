@@ -25,6 +25,7 @@ venv/
 **/saved/
 **/checkpoints/
 **/logs/
+**/log_tensorboard/
 **/results/artifacts/
 **/wandb/
 
