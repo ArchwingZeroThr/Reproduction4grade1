@@ -57,6 +57,7 @@ Hyperparameters for the proposed method are detailed in the paper, dataset-speci
 
 - Research notes: [`Note.md`](../../../recsys-firstgrade/knowledge_base/paper/diffusion/SimDiffRec/Note.md)
 - Reproduction plan: [`实验复现.md`](../../../recsys-firstgrade/knowledge_base/paper/diffusion/SimDiffRec/实验复现.md)
+- Reproduction results: [`复现结果.md`](../../../recsys-firstgrade/knowledge_base/paper/diffusion/SimDiffRec/复现结果.md)
 - Project status: [`STATUS.md`](../../../recsys-firstgrade/knowledge_base/paper/diffusion/SimDiffRec/STATUS.md)
 - Upstream provenance: [`UPSTREAM.md`](UPSTREAM.md)
 
