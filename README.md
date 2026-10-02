@@ -34,4 +34,4 @@ projects/<paper-id>/
   - 代码：[`projects/SimDiffRec/`](projects/SimDiffRec/)
   - 知识库：[`recsys-firstgrade/knowledge_base/paper/diffusion/SimDiffRec/`](../recsys-firstgrade/knowledge_base/paper/diffusion/SimDiffRec/)
   - upstream：`zingyon/SimDiffRec@eb6784b2e9741052c5f104847e41b5accc812e7e`
-  - 状态：阅读与静态代码审计完成，尚未下载数据或启动训练
+  - 状态：数据与静态预检完成；AutoDL 正式批次 attempt 2 运行中，详细进度见知识库 `STATUS.md`
