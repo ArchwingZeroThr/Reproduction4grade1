@@ -5,6 +5,7 @@ import unittest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SIMDIFF_PATH = PROJECT_ROOT / 'recbole/model/sequential_recommender/simdiff.py'
+RECBOLE_ROOT = PROJECT_ROOT / 'recbole'
 
 
 def _simdiff_method(name):
@@ -45,6 +46,23 @@ class SimDiffExecutionPatchTest(unittest.TestCase):
 
         self.assertIn('noise_mode: semantic', defaults)
         self.assertIn('position_mode: confidence', defaults)
+
+    def test_recbole_avoids_removed_numpy_scalar_aliases(self):
+        removed_aliases = {'float', 'bool'}
+        violations = []
+
+        for path in RECBOLE_ROOT.rglob('*.py'):
+            tree = ast.parse(path.read_text(encoding='utf-8'))
+            for node in ast.walk(tree):
+                if (
+                    isinstance(node, ast.Attribute)
+                    and isinstance(node.value, ast.Name)
+                    and node.value.id == 'np'
+                    and node.attr in removed_aliases
+                ):
+                    violations.append(f'{path.relative_to(PROJECT_ROOT)}:{node.lineno}')
+
+        self.assertEqual(violations, [])
 
 
 if __name__ == '__main__':
